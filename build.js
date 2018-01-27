@@ -61,15 +61,6 @@ var Stopwatch = function () {
       clearInterval(this.watch);
     }
   }, {
-    key: 'reset',
-    value: function reset() {
-      this.times = {
-        minutes: 0,
-        seconds: 0,
-        miliseconds: 0
-      };
-    }
-  }, {
     key: 'format',
     value: function format(times) {
       return pad0(times.minutes) + ':' + pad0(times.seconds) + ':' + pad0(Math.floor(times.miliseconds));
@@ -79,12 +70,45 @@ var Stopwatch = function () {
     value: function print() {
       this.display.innerText = this.format(this.times);
     }
+  }, {
+    key: 'printList',
+    value: function printList() {
+      var newTime = document.createElement('li');
+      newTime.innerHTML = this.format(this.times);
+      list.appendChild(newTime);
+    }
+  }, {
+    key: 'reset',
+    value: function reset() {
+      this.running = false;
+      clearInterval(this.watch);
+      this.times = {
+        minutes: 0,
+        seconds: 0,
+        miliseconds: 0
+      };
+    }
+  }, {
+    key: 'restart',
+    value: function restart() {
+      this.print();
+      this.printList();
+      this.reset();
+      this.print();
+    }
+  }, {
+    key: 'clear',
+    value: function clear() {
+      list.innerText = "";
+    }
   }]);
 
   return Stopwatch;
 }();
 
 var stopwatch = new Stopwatch(document.querySelector('.stopwatch'));
+
+var list = document.querySelector('.results');
 
 var startButton = document.getElementById('start');
 startButton.addEventListener('click', function () {
@@ -98,5 +122,10 @@ stopButton.addEventListener('click', function () {
 
 var resetButton = document.getElementById('reset');
 resetButton.addEventListener('click', function () {
-  return stopwatch.reset();
+  return stopwatch.restart();
+});
+
+var clearButton = document.getElementById('clear');
+clearButton.addEventListener('click', function () {
+  return stopwatch.clear();
 });
