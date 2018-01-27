@@ -1,1 +1,47 @@
+@import url('https://fonts.googleapis.com/css?family=VT323');
 
+* {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  font-family: 'VT323', monospace;
+  color: #000;
+  text-align: center;
+  list-style: none;
+  border: none;
+}
+
+body {
+  position: relative;
+}
+
+.controls {
+  margin: 100px 0 30px;
+
+}
+
+button {
+  font-size: 25px;
+  background-color: #fff;
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-bottom: 1px solid #000;
+}
+
+.stopwatch {
+  font-size: 230px;
+  position: absolute;
+  top: 50px;
+  left: 10%;
+  right: 10%;
+}
+
+.results {
+  font-size: 30px;
+  margin-top: 230px;
+  margin-bottom: 50px;
+}
