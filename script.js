@@ -5,94 +5,109 @@ function pad0(value) {
   }
   return result;
 }
-
-class Stopwatch {
-  constructor(display) {
-    this.running = false;
-    this.display = display;
-    this.reset();
-    this.print(this.times);
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      running: false,
+      times: {
+        minutes: 0,
+        seconds: 0,
+        miliseconds: 0
+      },
+      results: []
+    };
   }
 
   calculate() {
-    this.times.miliseconds += 1;
-    if (this.times.miliseconds >= 100) {
-      this.times.seconds += 1;
-      this.times.miliseconds = 0;
-    }
-    if (this.times.seconds >= 60) {
-      this.times.minutes += 1;
-      this.times.seconds = 0;
-    }
+    this.state.times.miliseconds += 1;
+    if (this.state.times.miliseconds >= 100) {
+      this.state.times.seconds += 1;
+      this.state.times.miliseconds = 0;
+    };
+    if (this.state.times.seconds >= 60) {
+      this.state.times.minutes += 1;
+      this.state.times.seconds = 0;
+    };
   }
 
   step() {
-    if (!this.running) return;
+    if (!this.state.running) return;
     this.calculate();
-    this.print();
+    this.setState({
+      times: {
+        minutes: this.state.times.minutes,
+        seconds: this.state.times.seconds,
+        miliseconds: this.state.times.miliseconds
+      }
+    });
   }
 
   start() {
-    if (!this.running) {
-      this.running = true;
+    if (!this.state.running) {
+      this.setState({
+        running: true
+      });
       this.watch = setInterval(() => this.step(), 10);
     }
   }
 
   stop() {
-      this.running = false;
-      clearInterval(this.watch);
+    this.setState({
+      running: false
+    });
+    clearInterval(this.watch);
+  }
+
+  save() {
+    this.setState({
+      results: [...this.state.results, this.state.times]
+    });
+  }
+
+  restart() {
+    this.setState({
+      times: {
+        minutes: 0,
+        seconds: 0,
+        miliseconds: 0
+      }
+    });;
+  }
+
+  reset() {
+    this.save();
+    this.restart();
+    this.stop();
+  }
+
+  clear() {
+    this.setState({
+      results: []
+    });
   }
 
   format(times) {
     return `${pad0(times.minutes)}:${pad0(times.seconds)}:${pad0(Math.floor(times.miliseconds))}`;
   }
 
-  print() {
-    this.display.innerText = this.format(this.times);
-  }
-
-  printList() {
-    let newTime = document.createElement('li');
-    newTime.innerHTML = this.format(this.times);
-    list.appendChild(newTime);
-  }
-
-  reset() {
-    this.running = false;
-    clearInterval(this.watch);
-    this.times = {
-      minutes: 0,
-      seconds: 0,
-      miliseconds: 0
-    };
-  }
-
-  restart() {
-    this.print();
-    this.printList();
-    this.reset();
-    this.print();
-  }
-
-  clear() {
-    list.innerText = "";
+  render() {
+    return (
+      <div className="container">
+        <nav className="controls">
+          <button type="button" id="start" onClick={ () => this.start() }>start</button>
+          <button type="button" id="stop" onClick={ () => this.stop() }>stop</button>
+          <button type="button" id="reset" onClick={ () => this.reset() }>save &#38; reset</button>
+          <button type="button" id="clear" onClick={ () => this.clear() }>clear</button>
+        </nav>
+        <div className="stopwatch">{this.format(this.state.times)}</div>
+        <ul className="results">
+          {this.state.results.map(result => <li>{this.format(result)}</li>)}
+        </ul>
+      </div>
+    );
   }
 }
 
-const stopwatch = new Stopwatch(
-document.querySelector('.stopwatch'));
-
-const list = document.querySelector('.results');
-
-const startButton = document.getElementById('start');
-startButton.addEventListener('click', () => stopwatch.start());
-
-const stopButton = document.getElementById('stop');
-stopButton.addEventListener('click', () => stopwatch.stop());
-
-const resetButton = document.getElementById('reset');
-resetButton.addEventListener('click', () => stopwatch.restart());
-
-const clearButton = document.getElementById('clear');
-clearButton.addEventListener('click', () => stopwatch.clear());
+const app = document.getElementById('app');
+ReactDOM.render(<App/>, app);
